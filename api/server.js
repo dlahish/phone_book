@@ -34,26 +34,7 @@ router.route('/people')
 
 router.route('/new')
   .get(function(req, res) {
-      var newPerson = new Person({
-       	"id" : "b01a0e23da718aaaaa9311b8b2dfb069",
-       	"name" : "Nadav Lachish",
-       	"phone" : "5248-469641",
-       	"avatar_image" : "images/b0/b01a0e23da718a08989311b8b2dfb069.png",
-       	"avatar_origin" : "https://robohash.org/b01a0e23da718a08989311b8b2dfb069.png?size=400x400&set=set1",
-       	"email" : "carolina_ankunding@blickmckenzie.io",
-       	"quote" : "Aren't you a little short for a Stormtrooper?",
-       	"chuck" : "Chuck Norris burst the dot com bubble.",
-       	"birthday" : 443138400,
-       	"address" : {
-       		"city" : "Avsås",
-       		"street" : "Larssons Gata 4",
-       		"country" : "Norrland"
-       	}
-      });
-      newPerson.save(function(err) {
-        if (err) { console.log(err) }
-        res.send('person saved');
-      });
+
   });
 
 
