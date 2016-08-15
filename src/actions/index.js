@@ -1,10 +1,12 @@
+import axios from 'axios'
+
 import {
   SEARCH_CHANGE
 } from './types'
 
-export function searchInputChange(value) {
+export function searchInputChange(searchValue) {
   return {
     type: SEARCH_CHANGE,
-    value
+    searchValue
   }
 }

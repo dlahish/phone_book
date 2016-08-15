@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;
 
 router.use(function(req, res, next) {
-    
+
     next();
 });
 
@@ -23,10 +23,10 @@ router.get('/', function(req, res) {
 
 router.route('/people')
   .get(function(req, res) {
-      Person.find({name: 'Per Åslund', phone: '4600-18228'}, function(err, person) {
+      Person.find({name: /^n/i}, function(err, person) {
           if (err)
               res.send(err);
-          console.log(person);
+          console.log(person.length);
           res.json(person);
       });
   });

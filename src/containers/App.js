@@ -28,9 +28,13 @@ class App extends Component {
   }
 
   render() {
+    const { searchValue } = this.props
     return (
       <div>
-        <SearchInput value={this.props.searchValue} onSearchChange={this.handleSearchChange}/>
+        <SearchInput
+          value={searchValue}
+          onSearchChange={this.handleSearchChange}
+        />
         <Results />
       </div>
     )
@@ -43,8 +47,10 @@ App.propTypes = {
 }
 
 function mapStateToProps(state) {
+  const { searchValue } = state
+
   return {
-    searchValue: state.searchValue
+    searchValue
   }
 }
 

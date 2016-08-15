@@ -18,7 +18,7 @@ export default class Results extends Component {
           <h2 className="cui__selector--direct__title">
             Search results
           </h2>
-          <Person />
+          <Person name="Nadav"/>
         </div>
       </div>
     )
