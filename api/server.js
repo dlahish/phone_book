@@ -3,7 +3,7 @@ const app        = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Person = require('./models/person')
-mongoose.Promise = require('bluebird');
+
 const router = express.Router();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8080;
 
-mongoose.connect('mongodb://localhost:klarna/klarna');
+mongoose.connect('mongodb://localhost/klarna');
 
 router.use(function(req, res, next) {
     console.log('Something is happening.');
