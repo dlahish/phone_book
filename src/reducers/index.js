@@ -12,11 +12,7 @@ function searchValue(state = '', action) {
   }
 }
 
-function peopleResults(state = {
-  isFetching: false,
-  didInvalidate: false,
-  items: []
-}, action) {
+function searchResults(state = {}, action) {
   switch (action.type) {
 
     default:
@@ -26,5 +22,5 @@ function peopleResults(state = {
 
 export default combineReducers({
   searchValue,
-  peopleResults
+  searchResults
 })

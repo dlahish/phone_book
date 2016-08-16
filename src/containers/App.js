@@ -17,9 +17,6 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleSearchChange = this.handleSearchChange.bind(this)
-
-    this.state = {
-    }
   }
 
   handleSearchChange(e) {
@@ -28,7 +25,7 @@ class App extends Component {
   }
 
   render() {
-    const { searchValue } = this.props
+    const { searchValue, isFetching, peopleList } = this.props
     return (
       <div>
         <SearchInput
@@ -36,6 +33,7 @@ class App extends Component {
           onSearchChange={this.handleSearchChange}
         />
         <Results />
+        {isFetching && <p>isFetching is true</p>}
       </div>
     )
   }
@@ -48,9 +46,21 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   const { searchValue } = state
+  const searchResults = state.searchResults[searchValue] || {}
+  let peopleList = []
+  let isFetching = true
+  if (searchResults.peopleList === undefined) {
+    isFetching = true
+    peopleList = []
+  } else {
+    isFetching = searchResults.isFetching
+    peopleList = searchResults.peopleList
+  }
 
   return {
-    searchValue
+    searchValue,
+    isFetching,
+    peopleList
   }
 }
 
