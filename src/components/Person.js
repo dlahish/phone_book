@@ -11,7 +11,7 @@ export default class Person extends Component {
         </div>
 
         <p className="cui__selector--direct__description">
-          Mackenzie Av, 34. Toronto, Canada.
+          Mackenzie Av, 34. Toronto, Canada
         </p>
       </div>
     )
