@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import SearchInput from '../components/SearchInput'
 import Results from '../components/Results'
-import { searchInputChange } from '../actions'
+import { searchInputChange, fetchPeopleIfNeeded } from '../actions'
 
 const styles = {
   userAvatar: {
@@ -17,6 +17,17 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleSearchChange = this.handleSearchChange.bind(this)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.searchValue !== this.props.searchValue) {
+      console.log(`search value from component will receive props ${nextProps.searchValue}`)
+      const { dispatch, searchValue, listInState } = nextProps
+      console.log(listInState)
+      if (!listInState) {
+        dispatch(fetchPeopleIfNeeded(searchValue))
+      }
+    }
   }
 
   handleSearchChange(e) {
@@ -46,21 +57,23 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   const { searchValue } = state
-  const searchResults = state.searchResults[searchValue] || {}
-  let peopleList = []
-  let isFetching = true
+  const searchResults = state.peopleFromDatabase[searchValue] || {}
+  let peopleList = [], isFetching, listInState
   if (searchResults.peopleList === undefined) {
     isFetching = true
+    listInState = false
     peopleList = []
   } else {
     isFetching = searchResults.isFetching
     peopleList = searchResults.peopleList
+    listInState = true
   }
 
   return {
     searchValue,
     isFetching,
-    peopleList
+    peopleList,
+    listInState
   }
 }
 
