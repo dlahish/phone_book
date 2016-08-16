@@ -49,14 +49,15 @@ function fetchPeople(searchValue) {
 
 function shouldFetchPeople(state, searchValue) {
   const peopleList = state.peopleFromDatabase[searchValue]
-  // console.log('shouldFetchPeople -----')
-  // console.log(peopleList.isFetching)
+  console.log('shouldFetchPeople -----')
+  console.log(searchValue)
+  console.log(state.peopleFromDatabase)
   if (!peopleList) {
     return true
   } else if (peopleList.isFetching) {
     return false
   } else {
-    return peopleList.inState
+    return peopleList.listInState
   }
 }
 

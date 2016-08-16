@@ -23,10 +23,7 @@ class App extends Component {
     if (nextProps.searchValue !== this.props.searchValue) {
       console.log(`search value from component will receive props ${nextProps.searchValue}`)
       const { dispatch, searchValue, listInState } = nextProps
-      console.log(listInState)
-      if (!listInState) {
-        dispatch(fetchPeopleIfNeeded(searchValue))
-      }
+      dispatch(fetchPeopleIfNeeded(searchValue))
     }
   }
 
@@ -36,7 +33,8 @@ class App extends Component {
   }
 
   render() {
-    const { searchValue, isFetching, peopleList } = this.props
+    const { searchValue, isFetching, peopleList, listInState } = this.props
+
     return (
       <div>
         <SearchInput
