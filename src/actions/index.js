@@ -54,10 +54,6 @@ function receivePeopleList(searchValue, peopleList) {
 
 function fetchPeople(searchValue) {
   return dispatch => {
-    // if (searchValue.length < 2) {
-    //   return;
-    // }
-
     dispatch(requestPeopleList(searchValue))
     axios({
       url: `${ROOT_URL}/people`,

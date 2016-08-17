@@ -7,7 +7,8 @@ import {
 
 const initialState = {
   listInState: false,
-  isFetching: true
+  isFetching: true,
+  listLength: 0
 }
 
 export default function apiController(state = initialState, action) {
@@ -17,9 +18,9 @@ export default function apiController(state = initialState, action) {
     case REQUEST_PEOPLE:
       return { ...state, isFetching: true }
     case RECEIVE_PEOPLE:
-      return { ...state, isFetching: false }
+      return { ...state, isFetching: false, listLength: state.listLength + action.peopleList.length }
     case CLEAR_PEOPLE_FROM_DATABASE:
-      return { ...state, isFetching: true }
+      return { ...state, isFetching: true, listLength: 0 }
     default:
       return state
   }
