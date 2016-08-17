@@ -9,8 +9,6 @@ function peopleList(state = {
   switch (action.type) {
     case RECEIVE_PEOPLE:
       return Object.assign({}, state, {
-        isFetching: false,
-        listInState: true,
         peopleList: action.peopleList
       })
     default:

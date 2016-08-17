@@ -12,15 +12,17 @@ const style = {
 
 export default class Person extends Component {
   render() {
+    const address = this.props.address
+    const addressLine = `${address.street}. ${address.city}, ${address.country}`
     return(
       <div className="cui__selector--direct__item">
-        <img style={style.userAvatar} src={kripke} alt="kripke"/>
+        <img style={style.userAvatar} src={this.props.avatar} alt="kripke"/>
         <div className="cui__selector--direct__label">
-          Saul Aaron Kripke
+          {this.props.name}
         </div>
 
         <p className="cui__selector--direct__description">
-          Mackenzie Av, 34. Toronto, Canada
+          {addressLine}
         </p>
       </div>
     )
@@ -28,5 +30,6 @@ export default class Person extends Component {
 }
 
 Person.propTypes = {
-  name: PropTypes.string
+  name: PropTypes.string.isRequired,
+  address: PropTypes.object.isRequired
 }

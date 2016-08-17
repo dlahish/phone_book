@@ -32,7 +32,7 @@ class App extends Component {
           value={searchValue}
           onSearchChange={this.handleSearchChange}
         />
-        <Results />
+        <Results peopleList={peopleList} />
         {isFetching && <p>isFetching is true</p>}
         {listInState && <p>List in State</p>}
       </div>
