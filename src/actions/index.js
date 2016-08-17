@@ -74,9 +74,9 @@ function fetchPeople(searchValue) {
 }
 
 function shouldFetchPeople(state, searchValue) {
-  const previousSearchValue = searchValue.slice(0,1)
-  console.log('previousSearchValue ' + previousSearchValue)
-  const peopleFromDatabase = state.peopleFromDatabase[previousSearchValue]
+  // const previousSearchValue = searchValue.slice(0,1)
+  // console.log('previousSearchValue ' + previousSearchValue)
+  const peopleFromDatabase = state.peopleFromDatabase[searchValue]
   const listInState = state.apiController.listInState
   console.log('shouldFetchPeople -----')
   console.log('searchValue - ' + searchValue)

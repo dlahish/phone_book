@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleSearchChange = this.handleSearchChange.bind(this)
+    this.getFilteredPeopleList = this.getFilteredPeopleList.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -23,16 +24,39 @@ class App extends Component {
     dispatch(searchInputChange(e.target.value))
   }
 
+  getFilteredPeopleList(peopleList, searchValue) {
+    console.log('getFilteredPeopleList ----')
+    if (peopleList.peopleList === undefined) {
+        return peopleList.peopleList
+    } else {
+        let filteredPeopleList = []
+        peopleList.peopleList.map((person, i) => {
+          console.log(i)
+          console.log(person)
+          const personNameTemp = person.name.toUpperCase().slice(0, searchValue.length)
+          console.log('personNameTemp - ' + personNameTemp)
+          const searchValueTemp  = searchValue.toUpperCase()
+          if (personNameTemp === searchValueTemp) {
+            filteredPeopleList.push(person)
+          }
+        })
+        return filteredPeopleList
+    }
+  }
+
   render() {
     const { searchValue, isFetching, peopleList, listInState } = this.props
-
+    // let filteredPeopleList = peopleList
+    // if (listInState === true) {
+    const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
+    // }
     return (
       <div>
         <SearchInput
           value={searchValue}
           onSearchChange={this.handleSearchChange}
         />
-        <Results peopleList={peopleList} />
+        <Results peopleList={filteredPeopleList} />
         {isFetching && <p>isFetching is true</p>}
         {listInState && <p>List in State</p>}
       </div>
@@ -48,18 +72,7 @@ App.propTypes = {
 function mapStateToProps(state) {
   const { searchValue } = state
   let { listInState, isFetching } = state.apiController
-  // const searchResults = state.peopleFromDatabase[searchValue] || {}
   let peopleList = state.peopleFromDatabase[searchValue] || []
-  // console.log('mapStateToProps - searchResults.peopleList - ' + searchResults.peopleList)
-  // if (searchResults.peopleList === undefined) {
-  //   isFetching = true
-  //   // listInState = false
-  //   peopleList = []
-  // } else {
-  //   // isFetching = searchResults.isFetching
-  //   peopleList = searchResults.peopleList
-  //   // listInState = true
-  // }
 
   return {
     searchValue,

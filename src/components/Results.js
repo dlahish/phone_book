@@ -11,16 +11,9 @@ const style = {
 
 export default class Results extends Component {
   render() {
-    const peopleList = this.props.peopleList.peopleList || []
+    const peopleList = this.props.peopleList || []
+    console.log('RESULT - peopleList ----')
     console.log(peopleList)
-    const displayPeopleList = peopleList.map(person =>
-      <Person
-        name={person.name}
-        address={person.address}
-        avatar={person.avatar_origin}
-        key={person.id}
-      />
-    )
 
     return(
       <div style={style.results}>
@@ -28,7 +21,14 @@ export default class Results extends Component {
           <h2 className="cui__selector--direct__title">
             Search results
           </h2>
-          {displayPeopleList}
+          {peopleList.map(person =>
+            <Person
+              name={person.name}
+              address={person.address}
+              avatar={person.avatar_origin}
+              key={person.id}
+            />
+          )}
         </div>
       </div>
     )

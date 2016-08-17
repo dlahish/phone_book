@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import kripke from '../kripke.jpg'
 
 const style = {
   userAvatar: {
@@ -20,7 +19,6 @@ export default class Person extends Component {
         <div className="cui__selector--direct__label">
           {this.props.name}
         </div>
-
         <p className="cui__selector--direct__description">
           {addressLine}
         </p>
