@@ -1,24 +1,12 @@
 import {
-  REQUEST_PEOPLE,
   RECEIVE_PEOPLE,
-  PEOPLE_IN_STATE
+  CLEAR_PEOPLE_FROM_DATABASE
 } from '../actions/types'
 
-function posts(state = {
-  isFetching: false,
-  listInState: false,
+function peopleList(state = {
   peopleList: []
 }, action) {
   switch (action.type) {
-    case PEOPLE_IN_STATE:
-      return Object.assign({}, state, {
-        listInState: true
-      })
-    case REQUEST_PEOPLE:
-      return Object.assign({}, state, {
-        isFetching: true,
-        listInState: false
-      })
     case RECEIVE_PEOPLE:
       return Object.assign({}, state, {
         isFetching: false,
@@ -30,13 +18,13 @@ function posts(state = {
   }
 }
 
-export default function peopleFromDatabase(state = { }, action) {
+export default function peopleFromDatabase(state = {}, action) {
   switch (action.type) {
-    case PEOPLE_IN_STATE:
+    case CLEAR_PEOPLE_FROM_DATABASE:
+      return {}
     case RECEIVE_PEOPLE:
-    case REQUEST_PEOPLE:
       return Object.assign({}, {
-        [action.searchValue]: posts(state[action.searchValue], action)
+        [action.searchValue]: peopleList(state[action.searchValue], action)
       })
     default:
       return state

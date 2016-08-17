@@ -4,15 +4,6 @@ import SearchInput from '../components/SearchInput'
 import Results from '../components/Results'
 import { searchInputChange, fetchPeopleIfNeeded } from '../actions'
 
-const styles = {
-  userAvatar: {
-    float: 'left',
-    marginRight: '12px',
-    width: '40px',
-    borderRadius: '40px'
-  }
-}
-
 class App extends Component {
   constructor(props) {
     super(props)
@@ -22,7 +13,7 @@ class App extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.searchValue !== this.props.searchValue) {
       console.log(`search value from component will receive props ${nextProps.searchValue}`)
-      const { dispatch, searchValue, listInState } = nextProps
+      const { dispatch, searchValue } = nextProps
       dispatch(fetchPeopleIfNeeded(searchValue))
     }
   }
@@ -43,6 +34,7 @@ class App extends Component {
         />
         <Results />
         {isFetching && <p>isFetching is true</p>}
+        {listInState && <p>List in State</p>}
       </div>
     )
   }
@@ -55,17 +47,19 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   const { searchValue } = state
-  const searchResults = state.peopleFromDatabase[searchValue] || {}
-  let peopleList = [], isFetching, listInState
-  if (searchResults.peopleList === undefined) {
-    isFetching = true
-    listInState = false
-    peopleList = []
-  } else {
-    isFetching = searchResults.isFetching
-    peopleList = searchResults.peopleList
-    listInState = true
-  }
+  let { listInState, isFetching } = state.apiController
+  // const searchResults = state.peopleFromDatabase[searchValue] || {}
+  let peopleList = state.peopleFromDatabase[searchValue] || []
+  // console.log('mapStateToProps - searchResults.peopleList - ' + searchResults.peopleList)
+  // if (searchResults.peopleList === undefined) {
+  //   isFetching = true
+  //   // listInState = false
+  //   peopleList = []
+  // } else {
+  //   // isFetching = searchResults.isFetching
+  //   peopleList = searchResults.peopleList
+  //   // listInState = true
+  // }
 
   return {
     searchValue,

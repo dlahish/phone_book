@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
 import peopleFromDatabase from './peopleFromDatabase'
+import apiController from './apiController'
 import {
-  SEARCH_CHANGE,
-  REQUEST_PEOPLE
+  SEARCH_CHANGE
 } from '../actions/types'
 
 function searchValue(state = '', action) {
@@ -16,5 +16,6 @@ function searchValue(state = '', action) {
 
 export default combineReducers({
   searchValue,
-  peopleFromDatabase
+  peopleFromDatabase,
+  apiController
 })

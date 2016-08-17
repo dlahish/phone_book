@@ -19,6 +19,7 @@ export default class SearchInput extends Component {
             placeholder="Type your search query"
             value={value}
             onChange={onSearchChange}
+            autoFocus={true}
           />
         </div>
       </div>

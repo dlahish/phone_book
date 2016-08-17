@@ -31,7 +31,7 @@ router.route('/people')
     // const searchValue = req.body.searchValue
     const searchValue = new RegExp('^' + req.body.searchValue, 'i')
     console.log(searchValue)
-    Person.find({name: searchValue}, function(err, person) {
+    Person.find({name: searchValue}).limit(50).exec(function(err, person) {
         if (err)
             res.send(err);
         console.log(person.length);
