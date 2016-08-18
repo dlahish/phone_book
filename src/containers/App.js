@@ -1,22 +1,23 @@
 import React, { Component, PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import SearchInput from '../components/SearchInput'
 import Results from '../components/Results'
-import { searchInputChange, fetchPeopleIfNeeded } from '../actions'
+import { searchInputChange, fetchPeopleIfNeeded, toggleScroll } from '../actions'
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.handleSearchChange = this.handleSearchChange.bind(this)
     this.getFilteredPeopleList = this.getFilteredPeopleList.bind(this)
+    this.fetchMorePeople = this.fetchMorePeople.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.searchValue !== this.props.searchValue) {
       console.log(`search value from component will receive props ${nextProps.searchValue}`)
-      const { dispatch, searchValue } = nextProps
-      dispatch(fetchPeopleIfNeeded(searchValue))
+      const { dispatch, searchValue, listLength, scroll } = nextProps
+      console.log(scroll)
+      dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
     }
   }
 
@@ -27,15 +28,15 @@ class App extends Component {
 
   getFilteredPeopleList(peopleList, searchValue) {
     console.log('getFilteredPeopleList ----')
-    if (peopleList.peopleList === undefined) {
-        return peopleList.peopleList
+    if (peopleList === undefined) {
+        return peopleList
     } else {
         let filteredPeopleList = []
-        peopleList.peopleList.map((person, i) => {
-          console.log(i)
-          console.log(person)
+        peopleList.map((person, i) => {
+          // console.log(i)
+          // console.log(person)
           const personNameTemp = person.name.toUpperCase().slice(0, searchValue.length)
-          console.log('personNameTemp - ' + personNameTemp)
+          // console.log('personNameTemp - ' + personNameTemp)
           const searchValueTemp  = searchValue.toUpperCase()
           if (personNameTemp === searchValueTemp) {
             filteredPeopleList.push(person)
@@ -45,21 +46,30 @@ class App extends Component {
     }
   }
 
+  fetchMorePeople() {
+    const { dispatch, searchValue, listLength, scroll } = this.props
+    console.log('fetch more people, listLength - ' + listLength)
+    if (listLength > 0) {
+      dispatch(toggleScroll())
+      dispatch(fetchPeopleIfNeeded(searchValue, listLength, true))
+    }
+  }
+
   render() {
-    const { searchValue, isFetching, peopleList, listInState } = this.props
-    // let filteredPeopleList = peopleList
-    // if (listInState === true) {
+    const { searchValue, isFetching, peopleList, listLength } = this.props
     const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
-    // }
+    console.log('listLength state - ' + listLength)
     return (
       <div>
         <SearchInput
           value={searchValue}
           onSearchChange={this.handleSearchChange}
         />
-        <Results peopleList={filteredPeopleList} />
-        {isFetching && <p>isFetching is true</p>}
-        {listInState && <p>List in State</p>}
+        <Results
+          peopleList={filteredPeopleList}
+          isFetching={isFetching}
+          fetchMorePeople={this.fetchMorePeople}
+        />
       </div>
     )
   }
@@ -72,14 +82,15 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   const { searchValue } = state
-  let { listInState, isFetching } = state.apiController
-  let peopleList = state.peopleFromDatabase[searchValue] || []
+  let { listLength, isFetching, scroll } = state.apiController
+  let peopleList = state.peopleListFromDatabase || []
 
   return {
     searchValue,
     isFetching,
     peopleList,
-    listInState
+    listLength,
+    scroll
   }
 }
 

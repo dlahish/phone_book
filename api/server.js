@@ -27,14 +27,13 @@ router.get('/', function(req, res) {
 
 router.route('/people')
   .post(function(req, res) {
-    console.log('people post')
-    // const searchValue = req.body.searchValue
+    const clientListLength = req.body.listLength
+    console.log('clientListLength - ' + clientListLength)
     const searchValue = new RegExp('^' + req.body.searchValue, 'i')
     console.log(searchValue)
-    Person.find({name: searchValue}).limit(10).exec(function(err, person) {
+    Person.find({name: searchValue}).skip(clientListLength).limit(10).exec(function(err, person) {
         if (err)
             res.send(err);
-        console.log(person.length);
         res.json(person);
     });
   });

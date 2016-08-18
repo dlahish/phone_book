@@ -4,9 +4,11 @@ const ROOT_URL = 'http://localhost:8080'
 import {
   SEARCH_CHANGE,
   REQUEST_PEOPLE,
-  RECEIVE_PEOPLE,
+  RECEIVE_PEOPLE_NEW,
+  RECEIVE_PEOPLE_SCROLL,
   LIST_IN_STATE,
-  CLEAR_PEOPLE_FROM_DATABASE
+  CLEAR_PEOPLE_FROM_DATABASE,
+  TOGGLE_SCROLL
 } from './types'
 
 export function searchInputChange(searchValue) {
@@ -26,6 +28,10 @@ export function searchInputChange(searchValue) {
   }
 }
 
+export function toggleScroll() {
+  return { type: TOGGLE_SCROLL }
+}
+
 function clearPeopleFromDatabase() {
   return { type: CLEAR_PEOPLE_FROM_DATABASE }
 }
@@ -37,66 +43,66 @@ export function toggleListInState(payload) {
   }
 }
 
-function requestPeopleList(searchValue) {
+function requestPeopleList(scroll) {
+  console.log('request people list, scroll -- ' + scroll)
   return {
-    type: REQUEST_PEOPLE,
-    searchValue
+    type: REQUEST_PEOPLE
   }
 }
 
-function receivePeopleList(searchValue, peopleList) {
-  return {
-    type: RECEIVE_PEOPLE,
-    searchValue,
-    peopleList
+function receivePeopleList(searchValue, peopleList, scroll) {
+  console.log('receive people list, scroll - ' + scroll)
+  if (scroll === true) {
+      return {
+        type: RECEIVE_PEOPLE_SCROLL,
+        searchValue,
+        peopleList
+      }
+  } else {
+      return {
+        type: RECEIVE_PEOPLE_NEW,
+        searchValue,
+        peopleList
+      }
   }
+
 }
 
-function fetchPeople(searchValue) {
+function fetchPeople(searchValue, listLength, scroll) {
+  console.log('fetch people, scroll -- ' + scroll)
   return dispatch => {
-    dispatch(requestPeopleList(searchValue))
+    dispatch(requestPeopleList(scroll))
+    console.log('fetch People, listLength - ' + listLength)
     axios({
       url: `${ROOT_URL}/people`,
       method: 'post',
       contentType: 'application/json',
-      data: { searchValue }
+      data: { searchValue, listLength }
     })
     .then(response => {
-      dispatch(receivePeopleList(searchValue, response.data))
-      dispatch(toggleListInState(true))
+      dispatch(receivePeopleList(searchValue, response.data, scroll))
+      // dispatch(toggleListInState(true))
     })
     .catch(err => { console.log(err); })
   }
 }
 
 function shouldFetchPeople(state, searchValue) {
-  // const previousSearchValue = searchValue.slice(0,1)
-  // console.log('previousSearchValue ' + previousSearchValue)
-  const peopleFromDatabase = state.peopleFromDatabase[searchValue]
-  const listInState = state.apiController.listInState
-  console.log('shouldFetchPeople -----')
-  console.log('searchValue - ' + searchValue)
-  console.log(peopleFromDatabase)
-  if (searchValue.length === 0) {
-    return false
-  }
+  // const peopleFromDatabase = state.peopleFromDatabase[searchValue]
+  const apiController = state.apiController
 
-  if (!peopleFromDatabase) {
-    console.log('!peopleFromDatabase -----')
-    return true
-  } else if (peopleFromDatabase.isFetching || listInState) {
-    console.log('peopleFromDatabase.isFetching - ' + peopleFromDatabase.isFetching)
-    console.log('listInState - ' + listInState)
-    return false
+  if (searchValue.length === 0 || apiController.isFetching) {
+      return false
   } else {
-    return false
+      return true
   }
 }
 
-export function fetchPeopleIfNeeded(searchValue) {
+export function fetchPeopleIfNeeded(searchValue, listLength, scroll) {
+  console.log('fetch people in nedded, scroll -- ' + scroll)
   return (dispatch, getState) => {
     if (shouldFetchPeople(getState(), searchValue)) {
-      return dispatch(fetchPeople(searchValue))
+      return dispatch(fetchPeople(searchValue, listLength, scroll))
     }
   }
 }
