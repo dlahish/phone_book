@@ -69,6 +69,7 @@ class App extends Component {
           peopleList={filteredPeopleList}
           isFetching={isFetching}
           fetchMorePeople={this.fetchMorePeople}
+          searchValue={searchValue}
         />
       </div>
     )
