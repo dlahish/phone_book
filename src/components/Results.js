@@ -16,6 +16,7 @@ export default class Results extends Component {
         <Person
           name={person.name}
           address={person.address}
+          phone={person.phone}
           avatar={person.avatar_origin}
           key={person.id}
         />

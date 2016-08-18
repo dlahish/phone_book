@@ -27,11 +27,26 @@ router.get('/', function(req, res) {
 
 router.route('/people')
   .post(function(req, res) {
+    function calculateAge(ageIn) { // birthday is a date
+      console.log('agein - '+ageIn)
+      const todayInEpoch = (new Date).getTime()
+      const todayInYearsEpoch = todayInEpoch / 31556926
+      const as = ageIn * 31556926
+      const aw = todayInYearsEpoch - as
+      return todayInYearsEpoch - aw
+    }
     const clientListLength = req.body.listLength
+    const searchValue = req.body.searchValue
     console.log('clientListLength - ' + clientListLength)
-    const searchValue = new RegExp('^' + req.body.searchValue, 'i')
-    console.log(searchValue)
-    Person.find({name: searchValue}).skip(clientListLength).limit(10).exec(function(err, person) {
+    const aa = searchValue.charCodeAt()
+    console.log(aa)
+    if (aa>=65 && aa<=90 || aa>=97 && aa<=122) { console.log('is a letter!')}
+    const searchValueRegExp = new RegExp('^' + searchValue, 'i')
+    console.log(searchValueRegExp)
+    const age = calculateAge(searchValue)
+    console.log(age)
+    // Person.find( { $or: [ { name: searchValueRegExp }, { birthday: age } ] } ).skip(clientListLength).limit(10).exec(function(err, person) {
+    Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, person) {
         if (err)
             res.send(err);
         res.json(person);

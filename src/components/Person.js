@@ -22,6 +22,7 @@ export default class Person extends Component {
         <p className="cui__selector--direct__description">
           {addressLine}
         </p>
+        <p>{this.props.phone}</p>
       </div>
     )
   }
@@ -29,5 +30,6 @@ export default class Person extends Component {
 
 Person.propTypes = {
   name: PropTypes.string.isRequired,
-  address: PropTypes.object.isRequired
+  address: PropTypes.object.isRequired,
+  phone: PropTypes.number.isRequired,
 }
