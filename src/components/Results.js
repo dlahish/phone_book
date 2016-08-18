@@ -48,7 +48,8 @@ export default class Results extends Component {
             {this.renderPeopleList(peopleList)}
             {this.renderWaypoint()}
           </div>
-          {peopleList.length === 0 && searchValue.length > 0 && isFetching === false ?
+          {/* {peopleList.length === 0 && searchValue.length > 0 && isFetching === false ? */}
+          {peopleList.length === 0 && searchValue.length > 0 ?
           <p className="cui__selector--direct__label">
             No results, please review your search or try a different one
           </p>: ''}
