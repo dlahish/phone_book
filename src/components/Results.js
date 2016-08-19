@@ -11,6 +11,8 @@ const styles = {
 
 export default class Results extends Component {
   renderPeopleList(peopleList) {
+    console.log('render People list')
+    console.log(peopleList)
     return(
       peopleList.map(person =>
         <Person
@@ -37,7 +39,8 @@ export default class Results extends Component {
   render() {
     const peopleList = this.props.peopleList || [],
           { searchValue, isFetching } = this.props
-    console.log('results ------ '+this.props.isFetching)
+    console.log('results render, peopleList ')
+    console.log(peopleList)
     return(
       <div style={styles.results}>
         <div className="cui__selector--direct title">
@@ -48,8 +51,7 @@ export default class Results extends Component {
             {this.renderPeopleList(peopleList)}
             {this.renderWaypoint()}
           </div>
-          {/* {peopleList.length === 0 && searchValue.length > 0 && isFetching === false ? */}
-          {peopleList.length === 0 && searchValue.length > 0 ?
+          {peopleList.length === 0 && searchValue.length > 0 && isFetching === false ?
           <p className="cui__selector--direct__label">
             No results, please review your search or try a different one
           </p>: ''}

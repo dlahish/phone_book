@@ -33,10 +33,8 @@ class App extends Component {
     } else {
         let filteredPeopleList = []
         peopleList.map((person, i) => {
-          // console.log(i)
-          // console.log(person)
+
           const personNameTemp = person.name.toUpperCase().slice(0, searchValue.length)
-          // console.log('personNameTemp - ' + personNameTemp)
           const searchValueTemp  = searchValue.toUpperCase()
           if (personNameTemp === searchValueTemp) {
             filteredPeopleList.push(person)
@@ -57,7 +55,7 @@ class App extends Component {
 
   render() {
     const { searchValue, isFetching, peopleList, listLength } = this.props
-    const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
+    // const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
     console.log('listLength state - ' + listLength)
     return (
       <div>
@@ -66,7 +64,7 @@ class App extends Component {
           onSearchChange={this.handleSearchChange}
         />
         <Results
-          peopleList={filteredPeopleList}
+          peopleList={peopleList}
           isFetching={isFetching}
           fetchMorePeople={this.fetchMorePeople}
           searchValue={searchValue}
@@ -85,6 +83,8 @@ function mapStateToProps(state) {
   const { searchValue } = state
   let { listLength, isFetching, scroll } = state.apiController
   let peopleList = state.peopleListFromDatabase || []
+  console.log('mapStateToProps peopleList- ')
+  console.log(peopleList)
 
   return {
     searchValue,

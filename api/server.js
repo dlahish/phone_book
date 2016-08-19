@@ -9,6 +9,17 @@ mongoose.connect('mongodb://localhost/klarna');
 
 const router = express.Router();
 
+function calculateAge(searchValue) {
+  var today = new Date().getTime() / 1000
+  var dateBeforeBirthday = today - searchValue * 31556926 - 86400 - 31556926
+  var dateAfterBirthday = today - searchValue * 31556926 - 86400
+  // console.log('dateOnBornYear - ' + birthdayDateBefore) //less then bd
+  // var thisYear = new Date().getFullYear()
+  // var birthdayYear = thisYear - searchValue
+  // const birthdayDate = new Date(birthdayYear, 0, 1).getTime() / 1000
+  return [dateBeforeBirthday, dateAfterBirthday]
+}
+
 app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,29 +38,42 @@ router.get('/', function(req, res) {
 
 router.route('/people')
   .post(function(req, res) {
-    function calculateAge(ageIn) { // birthday is a date
-      console.log('agein - '+ageIn)
-      const todayInEpoch = (new Date).getTime()
-      const todayInYearsEpoch = todayInEpoch / 31556926
-      const as = ageIn * 31556926
-      const aw = todayInYearsEpoch - as
-      return todayInYearsEpoch - aw
-    }
     const clientListLength = req.body.listLength
     const searchValue = req.body.searchValue
-    console.log('clientListLength - ' + clientListLength)
+    var splitSearchValue = searchValue.split(" ")
+    console.log(splitSearchValue)
     const aa = searchValue.charCodeAt()
-    console.log(aa)
+    console.log('type of searchValue - ' + typeof searchValue)
+    const searchValueParseInt = parseInt(searchValue)
+    console.log(searchValueParseInt)
+    console.log('type of searchValueParseInt - '+ typeof searchValueParseInt)
     if (aa>=65 && aa<=90 || aa>=97 && aa<=122) { console.log('is a letter!')}
     const searchValueRegExp = new RegExp('^' + searchValue, 'i')
     console.log(searchValueRegExp)
-    const age = calculateAge(searchValue)
-    console.log(age)
-    // Person.find( { $or: [ { name: searchValueRegExp }, { birthday: age } ] } ).skip(clientListLength).limit(10).exec(function(err, person) {
-    Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, person) {
-        if (err)
-            res.send(err);
-        res.json(person);
+    const dateRange = calculateAge(searchValue)
+    // const agePlusAYear = age + 31556926
+    // console.log(age)
+    // console.log(agePlusAYear)
+    // Person.find( { $or: [ { name: searchValueRegExp }, {birthday: { $lte: age } } ] } ).skip(clientListLength).limit(10).exec(function(err, person) {
+    Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, personName) {
+      var finalResult = []
+      if (err)
+          res.send(err);
+      finalResult = personName
+      if (searchValueParseInt) {
+          Person.find({ $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}).skip(clientListLength).limit(10).exec(function(err, personAge) {
+          // Person.find({birthday: { $gt: dateRange[0] } }).skip(clientListLength).limit(10).exec(function(err, personAge) {
+            if (err)
+                res.send(err);
+            finalResult = finalResult.concat(personAge)
+            // console.log(personAge)
+            res.json(finalResult)
+          })
+      } else {
+          res.json(finalResult);
+      }
+
+
     });
   });
 
