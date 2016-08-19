@@ -88,9 +88,8 @@ function fetchPeople(searchValue, listLength, scroll) {
 }
 
 function shouldFetchPeople(state, searchValue) {
-  // const peopleFromDatabase = state.peopleFromDatabase[searchValue]
   const apiController = state.apiController
-
+  console.log('should getch people, isFetching - ' + apiController.isFetching)
   if (searchValue.length === 0 || apiController.isFetching) {
       return false
   } else {
@@ -99,7 +98,7 @@ function shouldFetchPeople(state, searchValue) {
 }
 
 export function fetchPeopleIfNeeded(searchValue, listLength, scroll) {
-  console.log('fetch people in nedded, scroll -- ' + scroll)
+  console.log('fetch people if needed, scroll -- ' + scroll)
   return (dispatch, getState) => {
     if (shouldFetchPeople(getState(), searchValue)) {
       return dispatch(fetchPeople(searchValue, listLength, scroll))

@@ -9,14 +9,10 @@ mongoose.connect('mongodb://localhost/klarna');
 
 const router = express.Router();
 
-function calculateAge(searchValue) {
+function calculateDateRange(searchValue) {
   var today = new Date().getTime() / 1000
   var dateBeforeBirthday = today - searchValue * 31556926 - 86400 - 31556926
   var dateAfterBirthday = today - searchValue * 31556926 - 86400
-  // console.log('dateOnBornYear - ' + birthdayDateBefore) //less then bd
-  // var thisYear = new Date().getFullYear()
-  // var birthdayYear = thisYear - searchValue
-  // const birthdayDate = new Date(birthdayYear, 0, 1).getTime() / 1000
   return [dateBeforeBirthday, dateAfterBirthday]
 }
 
@@ -47,34 +43,103 @@ router.route('/people')
     const searchValueParseInt = parseInt(searchValue)
     console.log(searchValueParseInt)
     console.log('type of searchValueParseInt - '+ typeof searchValueParseInt)
-    if (aa>=65 && aa<=90 || aa>=97 && aa<=122) { console.log('is a letter!')}
-    const searchValueRegExp = new RegExp('^' + searchValue, 'i')
-    console.log(searchValueRegExp)
-    const dateRange = calculateAge(searchValue)
-    // const agePlusAYear = age + 31556926
-    // console.log(age)
-    // console.log(agePlusAYear)
-    // Person.find( { $or: [ { name: searchValueRegExp }, {birthday: { $lte: age } } ] } ).skip(clientListLength).limit(10).exec(function(err, person) {
-    Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, personName) {
-      var finalResult = []
-      if (err)
-          res.send(err);
-      finalResult = personName
-      if (searchValueParseInt) {
-          Person.find({ $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}).skip(clientListLength).limit(10).exec(function(err, personAge) {
-          // Person.find({birthday: { $gt: dateRange[0] } }).skip(clientListLength).limit(10).exec(function(err, personAge) {
-            if (err)
-                res.send(err);
-            finalResult = finalResult.concat(personAge)
-            // console.log(personAge)
-            res.json(finalResult)
-          })
+    var splitSearchValueString = []
+    var splitSearchValueNumber = []
+    // var dateRange = [-2208992400, 2524604400]
+    var dateRange = [0, 0]
+    console.log('dateRange ' + dateRange)
+    splitSearchValue.map(function(section) {
+      if (section === '') {
+        console.log('space')
+      } else if (isNaN(section)) {
+        console.log('is a string - section - ' + section)
+        const searchValueRegExp = new RegExp('^' + section, 'i')
+        splitSearchValueString.push(searchValueRegExp)
       } else {
-          res.json(finalResult);
+        console.log('is a number - section - ' + section)
+        const searchValueParseInt = parseInt(section)
+        dateRange = calculateDateRange(searchValueParseInt)
+        splitSearchValueNumber.push(dateRange)
       }
+    })
+
+    console.log('numbers array - ' + splitSearchValueNumber)
+    console.log('string array - ' + splitSearchValueString)
+    console.log('dateRange 2 ' + dateRange)
+
+    // if (aa>=65 && aa<=90 || aa>=97 && aa<=122) {
+    //   console.log('is a letter!')
+    //
+    // }
+    // const searchValueRegExp = new RegExp('^' + searchValue, 'i')
+    // console.log(searchValueRegExp)
+    // const dateRange = calculateDateRange(searchValue)
 
 
-    });
+    // Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, personName) {
+    //   var finalResult = []
+    //   if (err)
+    //       res.send(err);
+    //   finalResult = personName
+    //   if (searchValueParseInt) {
+    //       Person.find({ $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}).skip(clientListLength).limit(10).exec(function(err, personAge) {
+    //         if (err)
+    //             res.send(err);
+    //         finalResult = finalResult.concat(personAge)
+    //         // console.log(personAge)
+    //         res.json(finalResult)
+    //       })
+    //   } else {
+    //       res.json(finalResult);
+    //   }
+    // });
+
+    if (dateRange[0] === 0) {
+        Person
+          // .find({ $or: [
+          //   { name: { $in: splitSearchValueString } },
+          //   { $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}
+          // ] } )
+          .find({name: { $in: splitSearchValueString } })
+          .skip(clientListLength)
+          .limit(10)
+          .exec(function(err, personName) {
+            if (err)
+              res.send(err);
+            console.log('SEARCH 111---')
+            res.json(personName)
+          });
+    } else if (splitSearchValueString.length === 0) {
+        Person
+          .find({ $and: [
+            { birthday: { $gt: dateRange[0] } },
+            { birthday: { $lte: dateRange[1] } }
+          ] } )
+          .skip(clientListLength)
+          .limit(10)
+          .exec(function(err, personName) {
+            if (err)
+              res.send(err);
+            console.log('SEARCH 111---')
+            res.json(personName)
+          });
+    } else {
+        Person
+          .find({ $and: [
+            { name: { $in: splitSearchValueString } },
+            { birthday: { $gt: dateRange[0] } },
+            { birthday: { $lte: dateRange[1] } }
+          ] } )
+          // .find({name: { $in: splitSearchValueString } })
+          .skip(clientListLength)
+          .limit(10)
+          .exec(function(err, personName) {
+            if (err)
+              res.send(err);
+            console.log('SEARCH 222---')
+            res.json(personName)
+          });
+    }
   });
 
 router.route('/new')
