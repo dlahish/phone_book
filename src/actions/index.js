@@ -101,7 +101,10 @@ export function fetchPeopleIfNeeded(searchValue, listLength, scroll) {
   console.log('fetch people if needed, scroll -- ' + scroll)
   return (dispatch, getState) => {
     if (shouldFetchPeople(getState(), searchValue)) {
-      return dispatch(fetchPeople(searchValue, listLength, scroll))
+      setTimeout(() => {
+        return dispatch(fetchPeople(searchValue, listLength, scroll))
+      }, 200)
+      // return dispatch(fetchPeople(searchValue, listLength, scroll))
     }
   }
 }
