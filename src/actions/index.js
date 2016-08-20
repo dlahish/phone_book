@@ -23,7 +23,9 @@ export function searchInputChange(searchValue) {
         type: LIST_IN_STATE,
         payload: false
       })
-      dispatch(clearPeopleFromDatabase())
+      setTimeout(() => {
+        dispatch(clearPeopleFromDatabase())
+      }, 300)
     }
   }
 }
@@ -81,7 +83,6 @@ function fetchPeople(searchValue, listLength, scroll) {
     })
     .then(response => {
       dispatch(receivePeopleList(searchValue, response.data, scroll))
-      // dispatch(toggleListInState(true))
     })
     .catch(err => { console.log(err); })
   }
@@ -104,7 +105,6 @@ export function fetchPeopleIfNeeded(searchValue, listLength, scroll) {
       setTimeout(() => {
         return dispatch(fetchPeople(searchValue, listLength, scroll))
       }, 200)
-      // return dispatch(fetchPeople(searchValue, listLength, scroll))
     }
   }
 }

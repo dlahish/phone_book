@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const mongoose   = require('mongoose');
 const Person = require('./models/person');
+const personSearch = require('./models/personSearch')
 mongoose.connect('mongodb://localhost/klarna');
 
 const router = express.Router();
@@ -14,6 +15,24 @@ function calculateDateRange(searchValue) {
   var dateBeforeBirthday = today - searchValue * 31556926 - 86400 - 31556926
   var dateAfterBirthday = today - searchValue * 31556926 - 86400
   return [dateBeforeBirthday, dateAfterBirthday]
+}
+
+function parsePhoneFormat(searchValue, shouldAddHyphen) {
+  var phone = searchValue.toString()
+  var phoneRegExp
+  console.log('shouldAddHyphen - ' + shouldAddHyphen)
+  if (shouldAddHyphen) {
+    var phone1 = phone.slice(0,4)
+    var phone2 = phone.slice(5)
+    console.log('phone - ' + phone)
+    console.log('phone1 - ' + phone1)
+    console.log('phone2 - ' + phone2)
+    phoneRegExp = new RegExp('(^' + phone1 + '-)(' + phone2 + ')')
+    return phoneRegExp
+  }
+  console.log('PHONE - ' + phone)
+  phoneRegExp = new RegExp('^' + phone)
+  return phoneRegExp
 }
 
 app.use(cors());
@@ -36,109 +55,77 @@ router.route('/people')
   .post(function(req, res) {
     const clientListLength = req.body.listLength
     const searchValue = req.body.searchValue
-    var splitSearchValue = searchValue.split(" ")
-    console.log(splitSearchValue)
-    const aa = searchValue.charCodeAt()
-    console.log('type of searchValue - ' + typeof searchValue)
-    const searchValueParseInt = parseInt(searchValue)
-    console.log(searchValueParseInt)
-    console.log('type of searchValueParseInt - '+ typeof searchValueParseInt)
-    var splitSearchValueString = []
-    var splitSearchValueNumber = []
-    // var dateRange = [-2208992400, 2524604400]
+    var splitedSearchValue = searchValue.split(" ")
+    console.log(splitedSearchValue)
+    var stringValue = ''
+    var stringValueRegExp = ''
     var dateRange = [0, 0]
-    console.log('dateRange ' + dateRange)
-    splitSearchValue.map(function(section) {
+    var searchPhoneNumber, numberValueParseInt
+
+    splitedSearchValue.map(function(section) {
       if (section === '') {
-        console.log('space')
+          console.log('space')
       } else if (isNaN(section)) {
-        console.log('is a string - section - ' + section)
-        const searchValueRegExp = new RegExp('^' + section, 'i')
-        splitSearchValueString.push(searchValueRegExp)
+          console.log('is a string - section - ' + section)
+          if (section.charAt(4) === '-') {
+              console.log('is a string (phone) - section - ' + section)
+              searchPhoneNumber = parsePhoneFormat(section, true)
+          } else {
+              if (stringValue.length === 0) {
+                stringValue = section
+              } else {
+                stringValue = stringValue + ' ' + section
+              }
+              stringValueRegExp = new RegExp('^' + stringValue, 'i')
+          }
       } else {
-        console.log('is a number - section - ' + section)
-        const searchValueParseInt = parseInt(section)
-        dateRange = calculateDateRange(searchValueParseInt)
-        splitSearchValueNumber.push(dateRange)
+          console.log('is a number - section - ' + section)
+          numberValueParseInt = parseInt(section)
+          if (numberValueParseInt < 100 && dateRange[0] === 0) {
+              dateRange = calculateDateRange(numberValueParseInt)
+          } else if (section.length >= 4 && section.charCodeAt(3) >= 48 && section.charCodeAt(3) <= 57) {
+              console.log('is a string (phone) - section (add)- ' + section)
+              section = section.slice(0,4) + '-' + section.slice(4)
+              searchPhoneNumber = parsePhoneFormat(section, false)
+          } else {
+              searchPhoneNumber = parsePhoneFormat(numberValueParseInt, false)
+          }
       }
     })
-
-    console.log('numbers array - ' + splitSearchValueNumber)
-    console.log('string array - ' + splitSearchValueString)
+    console.log('--- CONSOLE LOG ---')
+    console.log('stringValue - ' + stringValue)
+    console.log('stringValueRegExp - ' + stringValueRegExp)
+    console.log('searchPhoneNumber - ' + searchPhoneNumber)
     console.log('dateRange 2 ' + dateRange)
 
-    // if (aa>=65 && aa<=90 || aa>=97 && aa<=122) {
-    //   console.log('is a letter!')
-    //
-    // }
-    // const searchValueRegExp = new RegExp('^' + searchValue, 'i')
-    // console.log(searchValueRegExp)
-    // const dateRange = calculateDateRange(searchValue)
-
-
-    // Person.find({name: searchValueRegExp}).skip(clientListLength).limit(10).exec(function(err, personName) {
-    //   var finalResult = []
-    //   if (err)
-    //       res.send(err);
-    //   finalResult = personName
-    //   if (searchValueParseInt) {
-    //       Person.find({ $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}).skip(clientListLength).limit(10).exec(function(err, personAge) {
-    //         if (err)
-    //             res.send(err);
-    //         finalResult = finalResult.concat(personAge)
-    //         // console.log(personAge)
-    //         res.json(finalResult)
-    //       })
-    //   } else {
-    //       res.json(finalResult);
-    //   }
-    // });
-
-    if (dateRange[0] === 0) {
-        Person
-          // .find({ $or: [
-          //   { name: { $in: splitSearchValueString } },
-          //   { $and: [ {birthday: { $gt: dateRange[0] } }, {birthday: { $lte: dateRange[1] } } ]}
-          // ] } )
-          .find({name: { $in: splitSearchValueString } })
-          .skip(clientListLength)
-          .limit(10)
-          .exec(function(err, personName) {
-            if (err)
-              res.send(err);
-            console.log('SEARCH 111---')
-            res.json(personName)
-          });
-    } else if (splitSearchValueString.length === 0) {
-        Person
-          .find({ $and: [
-            { birthday: { $gt: dateRange[0] } },
-            { birthday: { $lte: dateRange[1] } }
-          ] } )
-          .skip(clientListLength)
-          .limit(10)
-          .exec(function(err, personName) {
-            if (err)
-              res.send(err);
-            console.log('SEARCH 111---')
-            res.json(personName)
-          });
-    } else {
-        Person
-          .find({ $and: [
-            { name: { $in: splitSearchValueString } },
-            { birthday: { $gt: dateRange[0] } },
-            { birthday: { $lte: dateRange[1] } }
-          ] } )
-          // .find({name: { $in: splitSearchValueString } })
-          .skip(clientListLength)
-          .limit(10)
-          .exec(function(err, personName) {
-            if (err)
-              res.send(err);
-            console.log('SEARCH 222---')
-            res.json(personName)
-          });
+    if (stringValue.length > 0 && dateRange[0] !== 0 && searchPhoneNumber) {
+      console.log('--- SEARCH FOR NAME & AGE & PHONE')
+      //search name & age & phone
+      personSearch('name&age&phone', res, stringValueRegExp, clientListLength, searchPhoneNumber, dateRange)
+    } else if (stringValue.length > 0 && dateRange[0] !== 0) {
+      console.log('--- SEARCH FOR NAME & AGE')
+      //search only names and age
+      personSearch('name&age', res, stringValueRegExp, clientListLength, null, dateRange)
+    } else if (stringValue.length > 0 && searchPhoneNumber && dateRange[0] === 0) {
+      console.log('--- SEARCH FOR NAME & PHONE NUMBER')
+      //search name & phone
+      personSearch('name&phone', res, stringValueRegExp, clientListLength, searchPhoneNumber)
+    } else if (stringValue.length === 0 && dateRange[0] !== 0 && searchPhoneNumber) {
+      console.log('--- SEARCH FOR AGE & PHONE')
+      //search age & phone
+      personSearch('age&phone', res, null, clientListLength, searchPhoneNumber, dateRange)
+    } else if (stringValue.length > 0) {
+      console.log('--- SEARCH FOR NAME')
+      //search name only
+      personSearch('name', res, stringValueRegExp, clientListLength)
+    } else if (dateRange[0] !== 0) {
+      console.log('--- SEARCH FOR BIRTHDAY')
+      //search birthday only
+      personSearch('birthday', res, stringValueRegExp, clientListLength, null, dateRange)
+    } else if (searchPhoneNumber) {
+      console.log('--- SEARCH FOR PHONE NUMBER')
+      //search phone only
+      personSearch('phone', res, stringValueRegExp, clientListLength, searchPhoneNumber)
     }
   });
 
