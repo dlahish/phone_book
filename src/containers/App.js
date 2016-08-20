@@ -10,6 +10,11 @@ class App extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this)
     this.getFilteredPeopleList = this.getFilteredPeopleList.bind(this)
     this.fetchMorePeople = this.fetchMorePeople.bind(this)
+    this.handleCloseUpArrow = this.handleCloseUpArrow.bind(this)
+
+    this.state = {
+      height: 0
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -18,6 +23,13 @@ class App extends Component {
       const { dispatch, searchValue, listLength, scroll } = nextProps
       console.log(scroll)
       dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
+      const height = document.getElementById('root').clientHeight;
+      console.log('HEIGHT ---' + height)
+      if (height > window.innerHeight) {
+          this.setState({ upArrow: true })
+      } else {
+          this.setState({ upArrow: false })
+      }
     }
   }
 
@@ -44,19 +56,26 @@ class App extends Component {
     }
   }
 
+  handleCloseUpArrow() {
+    this.setState({ upArrow: false })
+  }
+
   fetchMorePeople() {
     const { dispatch, searchValue, listLength, scroll } = this.props
     console.log('fetch more people, listLength - ' + listLength)
     if (listLength > 0) {
       dispatch(toggleScroll())
       dispatch(fetchPeopleIfNeeded(searchValue, listLength, true))
+      this.setState({ upArrow: true })
     }
   }
 
   render() {
     const { searchValue, isFetching, peopleList, listLength } = this.props
     // const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
+    console.log('window.height - ' + window.innerHeight)
     console.log('listLength state - ' + listLength)
+    console.log('this.state --- ' + this.state.upArrow)
     return (
       <div>
         <SearchInput
@@ -67,8 +86,13 @@ class App extends Component {
           peopleList={peopleList}
           isFetching={isFetching}
           fetchMorePeople={this.fetchMorePeople}
+          handleCloseUpArrow={this.handleCloseUpArrow}
           searchValue={searchValue}
         />
+        {this.state.upArrow ?
+        <div style={{ bottom: 0, position: 'fixed'}}>
+          AAARRRROOOOWWWW
+        </div>: ''}
       </div>
     )
   }

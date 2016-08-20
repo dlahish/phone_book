@@ -30,7 +30,7 @@ export default class Results extends Component {
     return (
       <Waypoint
         onEnter={this.props.fetchMorePeople}
-        // onLeave={}
+        onLeave={this.props.handleCloseUpArrow}
         threshold={0}
       />
     )
