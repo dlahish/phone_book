@@ -36,6 +36,14 @@
     }
 }
 *******************************************************************************/
+.scrolltop-arrow {
+  opacity: 0.2;
+}
+
+.scrolltop-arrow:hover {
+  opacity: 0.4;
+}
+
 .cui__tooltip.top-left:after, .cui__tooltip.top:after, .cui__tooltip.top-right:after {
   border-bottom: 5px solid;
   border-bottom-color: #364759;

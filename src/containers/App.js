@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import SearchInput from '../components/SearchInput'
 import Results from '../components/Results'
+import ScrollTopArrow from '../components/scrollTopArrow'
 import { searchInputChange, fetchPeopleIfNeeded, toggleScroll } from '../actions'
 
 class App extends Component {
@@ -10,26 +11,48 @@ class App extends Component {
     this.handleSearchChange = this.handleSearchChange.bind(this)
     this.getFilteredPeopleList = this.getFilteredPeopleList.bind(this)
     this.fetchMorePeople = this.fetchMorePeople.bind(this)
-    this.handleCloseUpArrow = this.handleCloseUpArrow.bind(this)
+    this.handleScrollTopArrow = this.handleScrollTopArrow.bind(this)
 
     this.state = {
-      height: 0
+      scrollTopArrow: false
     }
+  }
+
+  componentDidMount() {
+      window.addEventListener('scroll', this.handleScroll.bind(this))
+  }
+
+  componentWillUnmount() {
+      window.removeEventListener('scroll', this.handleScroll.bind(this))
+  }
+
+  handleScroll(event) {
+    const height = document.getElementById('root').clientHeight
+    const yHeight = window.scrollY
+    const windowHeight = window.innerHeight
+    console.log('root heihgt - '+height)
+    console.log('yHeight' + yHeight)
+    console.log('windowHeight - ' + windowHeight)
+    if (yHeight >= windowHeight) {
+      console.log('should show upbutton')
+        this.setState({ scrollTopArrow: true })
+    } else if (yHeight === 0) {
+        this.setState({ scrollTopArrow: false })
+    }
+  }
+
+  handleScrollTopArrow() {
+    console.log('--- handle scroll top arrow ---')
+    var body = document.body
+    body.scrollTop = 0
+    this.setState({ scrollTopArrow: false })
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.searchValue !== this.props.searchValue) {
-      console.log(`search value from component will receive props ${nextProps.searchValue}`)
+      console.log('--- component will receive props ---')
       const { dispatch, searchValue, listLength, scroll } = nextProps
-      console.log(scroll)
       dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
-      const height = document.getElementById('root').clientHeight;
-      console.log('HEIGHT ---' + height)
-      if (height > window.innerHeight) {
-          this.setState({ upArrow: true })
-      } else {
-          this.setState({ upArrow: false })
-      }
     }
   }
 
@@ -45,7 +68,6 @@ class App extends Component {
     } else {
         let filteredPeopleList = []
         peopleList.map((person, i) => {
-
           const personNameTemp = person.name.toUpperCase().slice(0, searchValue.length)
           const searchValueTemp  = searchValue.toUpperCase()
           if (personNameTemp === searchValueTemp) {
@@ -56,26 +78,18 @@ class App extends Component {
     }
   }
 
-  handleCloseUpArrow() {
-    this.setState({ upArrow: false })
-  }
-
   fetchMorePeople() {
-    const { dispatch, searchValue, listLength, scroll } = this.props
-    console.log('fetch more people, listLength - ' + listLength)
+    const { dispatch, searchValue, listLength } = this.props
     if (listLength > 0) {
       dispatch(toggleScroll())
       dispatch(fetchPeopleIfNeeded(searchValue, listLength, true))
-      this.setState({ upArrow: true })
     }
   }
 
   render() {
-    const { searchValue, isFetching, peopleList, listLength } = this.props
-    // const filteredPeopleList = this.getFilteredPeopleList(peopleList, searchValue)
-    console.log('window.height - ' + window.innerHeight)
-    console.log('listLength state - ' + listLength)
-    console.log('this.state --- ' + this.state.upArrow)
+    console.log('--- RENDER ---')
+    const { searchValue, isFetching, peopleList } = this.props
+
     return (
       <div>
         <SearchInput
@@ -86,13 +100,12 @@ class App extends Component {
           peopleList={peopleList}
           isFetching={isFetching}
           fetchMorePeople={this.fetchMorePeople}
-          handleCloseUpArrow={this.handleCloseUpArrow}
           searchValue={searchValue}
         />
-        {this.state.upArrow ?
-        <div style={{ bottom: 0, position: 'fixed'}}>
-          AAARRRROOOOWWWW
-        </div>: ''}
+        <ScrollTopArrow
+          display={this.state.scrollTopArrow}
+          handleScrollTopArrow={this.handleScrollTopArrow}
+        />
       </div>
     )
   }
@@ -107,8 +120,6 @@ function mapStateToProps(state) {
   const { searchValue } = state
   let { listLength, isFetching, scroll } = state.apiController
   let peopleList = state.peopleListFromDatabase || []
-  console.log('mapStateToProps peopleList- ')
-  console.log(peopleList)
 
   return {
     searchValue,

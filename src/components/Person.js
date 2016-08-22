@@ -1,6 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 
-const style = {
+const styles = {
+  person: {
+    zIndex: 0
+  },
+
   userAvatar: {
     float: 'left',
     marginRight: '12px',
@@ -14,8 +18,8 @@ export default class Person extends Component {
     const address = this.props.address
     const addressLine = `${address.street}. ${address.city}, ${address.country}`
     return(
-      <div className="cui__selector--direct__item">
-        <img style={style.userAvatar} src={this.props.avatar} alt="kripke"/>
+      <div className="cui__selector--direct__item" style={styles.person}>
+        <img style={styles.userAvatar} src={this.props.avatar} alt="kripke"/>
         <div className="cui__selector--direct__label">
           {this.props.name}
         </div>

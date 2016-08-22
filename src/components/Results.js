@@ -5,14 +5,13 @@ import Waypoint from 'react-waypoint'
 const styles = {
   results: {
     margin: '40px auto',
-    width: '800px'
+    width: '800px',
+    zIndex: 0
   }
 }
 
 export default class Results extends Component {
   renderPeopleList(peopleList) {
-    console.log('render People list')
-    console.log(peopleList)
     return(
       peopleList.map(person =>
         <Person
@@ -30,7 +29,6 @@ export default class Results extends Component {
     return (
       <Waypoint
         onEnter={this.props.fetchMorePeople}
-        onLeave={this.props.handleCloseUpArrow}
         threshold={0}
       />
     )
@@ -39,8 +37,6 @@ export default class Results extends Component {
   render() {
     const peopleList = this.props.peopleList || [],
           { searchValue, isFetching } = this.props
-    console.log('results render, peopleList ')
-    console.log(peopleList)
     return(
       <div style={styles.results}>
         <div className="cui__selector--direct title">
