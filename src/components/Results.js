@@ -17,7 +17,6 @@ export default class Results extends Component {
         <Person
           name={person.name}
           address={person.address}
-          phone={person.phone}
           avatar={person.avatar_origin}
           key={person.id}
         />
@@ -41,7 +40,7 @@ export default class Results extends Component {
       <div style={styles.results}>
         <div className="cui__selector--direct title">
           <h2 className="cui__selector--direct__title">
-            Search results {this.props.isFetching}
+            Search results
           </h2>
           <div>
             {this.renderPeopleList(peopleList)}

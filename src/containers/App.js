@@ -9,7 +9,6 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.handleSearchChange = this.handleSearchChange.bind(this)
-    this.getFilteredPeopleList = this.getFilteredPeopleList.bind(this)
     this.fetchMorePeople = this.fetchMorePeople.bind(this)
     this.handleScrollTopArrow = this.handleScrollTopArrow.bind(this)
 
@@ -27,22 +26,16 @@ class App extends Component {
   }
 
   handleScroll(event) {
-    const height = document.getElementById('root').clientHeight
-    const yHeight = window.scrollY
+    const scrollHeight = window.scrollY
     const windowHeight = window.innerHeight
-    console.log('root heihgt - '+height)
-    console.log('yHeight' + yHeight)
-    console.log('windowHeight - ' + windowHeight)
-    if (yHeight >= windowHeight) {
-      console.log('should show upbutton')
+    if (scrollHeight >= windowHeight) {
         this.setState({ scrollTopArrow: true })
-    } else if (yHeight === 0) {
+    } else if (scrollHeight === 0) {
         this.setState({ scrollTopArrow: false })
     }
   }
 
   handleScrollTopArrow() {
-    console.log('--- handle scroll top arrow ---')
     var body = document.body
     body.scrollTop = 0
     this.setState({ scrollTopArrow: false })
@@ -50,7 +43,6 @@ class App extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.searchValue !== this.props.searchValue) {
-      console.log('--- component will receive props ---')
       const { dispatch, searchValue, listLength, scroll } = nextProps
       dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
     }
@@ -59,23 +51,6 @@ class App extends Component {
   handleSearchChange(e) {
     const { dispatch } = this.props
     dispatch(searchInputChange(e.target.value))
-  }
-
-  getFilteredPeopleList(peopleList, searchValue) {
-    console.log('getFilteredPeopleList ----')
-    if (peopleList === undefined) {
-        return peopleList
-    } else {
-        let filteredPeopleList = []
-        peopleList.map((person, i) => {
-          const personNameTemp = person.name.toUpperCase().slice(0, searchValue.length)
-          const searchValueTemp  = searchValue.toUpperCase()
-          if (personNameTemp === searchValueTemp) {
-            filteredPeopleList.push(person)
-          }
-        })
-        return filteredPeopleList
-    }
   }
 
   fetchMorePeople() {
@@ -87,7 +62,6 @@ class App extends Component {
   }
 
   render() {
-    console.log('--- RENDER ---')
     const { searchValue, isFetching, peopleList } = this.props
 
     return (

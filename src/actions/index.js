@@ -6,8 +6,7 @@ import {
   REQUEST_PEOPLE,
   RECEIVE_PEOPLE_NEW,
   RECEIVE_PEOPLE_SCROLL,
-  LIST_IN_STATE,
-  CLEAR_PEOPLE_FROM_DATABASE,
+  CLEAR_PEOPLE_FROM_STATE,
   TOGGLE_SCROLL
 } from './types'
 
@@ -18,13 +17,8 @@ export function searchInputChange(searchValue) {
       searchValue
     })
     if (searchValue.length === 0) {
-      console.log(searchValue.length)
-      dispatch({
-        type: LIST_IN_STATE,
-        payload: false
-      })
       setTimeout(() => {
-        dispatch(clearPeopleFromDatabase())
+        dispatch(clearPeopleFromState())
       }, 300)
     }
   }
@@ -34,26 +28,17 @@ export function toggleScroll() {
   return { type: TOGGLE_SCROLL }
 }
 
-function clearPeopleFromDatabase() {
-  return { type: CLEAR_PEOPLE_FROM_DATABASE }
-}
-
-export function toggleListInState(payload) {
-  return {
-    type: LIST_IN_STATE,
-    payload
-  }
+function clearPeopleFromState() {
+  return { type: CLEAR_PEOPLE_FROM_STATE }
 }
 
 function requestPeopleList(scroll) {
-  console.log('request people list, scroll -- ' + scroll)
   return {
     type: REQUEST_PEOPLE
   }
 }
 
 function receivePeopleList(searchValue, peopleList, scroll) {
-  console.log('receive people list, scroll - ' + scroll)
   if (scroll === true) {
       return {
         type: RECEIVE_PEOPLE_SCROLL,
@@ -67,14 +52,11 @@ function receivePeopleList(searchValue, peopleList, scroll) {
         peopleList
       }
   }
-
 }
 
 function fetchPeople(searchValue, listLength, scroll) {
-  console.log('fetch people, scroll -- ' + scroll)
   return dispatch => {
-    dispatch(requestPeopleList(scroll))
-    console.log('fetch People, listLength - ' + listLength)
+    dispatch(requestPeopleList())
     axios({
       url: `${ROOT_URL}/people`,
       method: 'post',
@@ -90,7 +72,6 @@ function fetchPeople(searchValue, listLength, scroll) {
 
 function shouldFetchPeople(state, searchValue) {
   const apiController = state.apiController
-  console.log('should getch people, isFetching - ' + apiController.isFetching)
   if (searchValue.length === 0 || apiController.isFetching) {
       return false
   } else {
@@ -99,7 +80,6 @@ function shouldFetchPeople(state, searchValue) {
 }
 
 export function fetchPeopleIfNeeded(searchValue, listLength, scroll) {
-  console.log('fetch people if needed, scroll -- ' + scroll)
   return (dispatch, getState) => {
     if (shouldFetchPeople(getState(), searchValue)) {
       setTimeout(() => {

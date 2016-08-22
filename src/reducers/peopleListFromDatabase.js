@@ -1,13 +1,13 @@
 import {
   RECEIVE_PEOPLE_NEW,
   RECEIVE_PEOPLE_SCROLL,
-  CLEAR_PEOPLE_FROM_DATABASE
+  CLEAR_PEOPLE_FROM_STATE
 } from '../actions/types'
 
 export default function peopleListFromDatabase(state = [], action) {
   let nextState = state
   switch (action.type) {
-    case CLEAR_PEOPLE_FROM_DATABASE:
+    case CLEAR_PEOPLE_FROM_STATE:
       return []
     case RECEIVE_PEOPLE_NEW:
       nextState = []
