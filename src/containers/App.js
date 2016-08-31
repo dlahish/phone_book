@@ -25,6 +25,13 @@ class App extends Component {
       window.removeEventListener('scroll', this.handleScroll.bind(this))
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.searchValue !== this.props.searchValue) {
+      const { dispatch, searchValue, listLength, scroll } = nextProps
+      dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
+    }
+  }
+
   handleScroll(event) {
     const scrollHeight = window.scrollY
     const windowHeight = window.innerHeight
@@ -39,13 +46,6 @@ class App extends Component {
     var body = document.body
     body.scrollTop = 0
     this.setState({ scrollTopArrow: false })
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.searchValue !== this.props.searchValue) {
-      const { dispatch, searchValue, listLength, scroll } = nextProps
-      dispatch(fetchPeopleIfNeeded(searchValue, listLength, scroll))
-    }
   }
 
   handleSearchChange(e) {
