@@ -15,12 +15,9 @@ module.exports = {
     splittedSearchValue.forEach(function(section) {
       if (section === '') {
       } else if (isNaN(section)) {
-          if (section.charAt(4) === '-') {
-              phoneNumberToSearch = dbFunctions.formatPhoneNumber(section, true)
-          } else {
-              nameValue = nameValue.length === 0 ? section : nameValue + ' ' + section
-              nameValueRegExp = new RegExp('^' + nameValue, 'i')
-          }
+          phoneNumberToSearch = section.charAt(4) === '-' ? dbFunctions.formatPhoneNumber(section, true) : ''
+          nameValue = nameValue.length === 0 ? section : nameValue + ' ' + section
+          nameValueRegExp = new RegExp('^' + nameValue, 'i')
       } else {
           numberValue = parseInt(section)
           if (numberValue < 100 && birthdayDateRange[0] === 0) {
