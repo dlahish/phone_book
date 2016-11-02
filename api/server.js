@@ -6,7 +6,8 @@ const cors         = require('cors');
 const mongoose     = require('mongoose');
 const dbQuery      = require('./db-query');
 
-mongoose.connect('mongodb://localhost/klarna');
+// mongoose.connect('mongodb://localhost/klarna');
+mongoose.connect('mongodb://localhost/yellowpages');
 app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
