@@ -7,6 +7,23 @@ const styles = {
     margin: '40px auto',
     width: '800px',
     zIndex: 0
+  },
+  title: {
+    fontFamily: ["Open Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#3c3c3e',
+    height: '20px',
+    lineHeight: '20px',
+    margin: 0,
+    padding: '16px 0 9px',
+    textTransform: 'uppercase',
+    marginBottom: '6px'
+  },
+  noResults: {
+    fontFamily: ["Open Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+    fontSize: '14px',
+    fontWeight: '600',
   }
 }
 
@@ -38,8 +55,7 @@ export default class Results extends Component {
           { searchValue, isFetching } = this.props
     return(
       <div style={styles.results}>
-        <div className="cui__selector--direct title">
-          <h2 className="cui__selector--direct__title">
+          <h2 style={styles.title}>
             Search results
           </h2>
           <div>
@@ -47,10 +63,9 @@ export default class Results extends Component {
             {this.renderWaypoint()}
           </div>
           {peopleList.length === 0 && searchValue.length > 0 && isFetching === false ?
-          <p className="cui__selector--direct__label">
+          <p style={styles.noResults}>
             No results, please review your search or try a different one
           </p>: ''}
-        </div>
       </div>
     )
   }

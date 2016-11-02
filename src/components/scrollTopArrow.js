@@ -13,4 +13,4 @@ export default (props) =>
     className="scrolltop-arrow fa fa-chevron-up fa-2x" aria-hidden="true"
     style={style}
     onClick={props.handleScrollTopArrow}
-  /> : <div></div>
+  /> : null
