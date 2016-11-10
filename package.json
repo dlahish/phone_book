@@ -1,5 +1,5 @@
 {
-  "name": "YellowPages",
+  "name": "PhoneBook",
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
@@ -35,7 +35,7 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject",
     "api": "nodemon api/server.js",
-    "dbInit": "mongoimport --db yellowpages --collection people --file people.json --jsonArray"
+    "dbInit": "mongoimport --db phonebook --collection people --file people.json --jsonArray"
   },
   "eslintConfig": {
     "extends": "./node_modules/react-scripts/config/eslint.js"

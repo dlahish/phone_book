@@ -19,7 +19,7 @@ module.exports = {
           nameValue = nameValue.length === 0 ? section : nameValue + ' ' + section
           nameValueRegExp = new RegExp('^' + nameValue, 'i')
       } else {
-          numberValue = parseInt(section)
+          numberValue = parseInt(section, 10)
           if (numberValue < 100 && birthdayDateRange[0] === 0) {
               birthdayDateRange = dbFunctions.birthdayDateRange(numberValue)
           } else if (section.length >= 4 && section.charCodeAt(3) >= 48 && section.charCodeAt(3) <= 57) {

@@ -7,7 +7,7 @@ const mongoose     = require('mongoose');
 const dbQuery      = require('./db-query');
 
 // mongoose.connect('mongodb://localhost/klarna');
-mongoose.connect('mongodb://localhost/yellowpages');
+mongoose.connect('mongodb://localhost/phonebook');
 app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));

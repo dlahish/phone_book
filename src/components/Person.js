@@ -24,14 +24,12 @@ const styles = {
 
 export default class Person extends Component {
   render() {
-    const address = this.props.address
-    const addressLine = `${address.street}. ${address.city}, ${address.country}`
     return(
       <div style={styles.item}>
         <img style={styles.userAvatar} src={this.props.avatar} alt="kripke"/>
           {this.props.name}
         <p>
-          {addressLine}
+          {this.props.address}
         </p>
       </div>
     )

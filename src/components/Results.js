@@ -34,8 +34,8 @@ export default class Results extends Component {
         <Person
           name={person.name}
           address={person.address}
-          avatar={person.avatar_origin}
-          key={person.id}
+          avatar={person.avatar}
+          key={person._id}
         />
       )
     )
